@@ -77,8 +77,9 @@ int main(int argc, char **argv)
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 	
+	// 3E. Membuat mode Killer menggunakan bash
 	char killername[100];
-	strcpy(killername, "/home/akmal/Desktop/Akmal/Praktikum2/3/killer.sh");
+	strcpy(killername, "/home/akmal/Akmal/killer.sh");
 	FILE *killer = fopen(killername, "w");
 
 	if(strcmp(argv[1], "-z") == 0) {
@@ -101,7 +102,7 @@ int main(int argc, char **argv)
 
 	char pesan[120] = "Download Success";
 	while(1) {
-		char foldername[100] = "/home/akmal/Desktop/Akmal/Praktikum2/3/";
+		char foldername[100] = "/home/akmal/Akmal/";
         	char strtime[100];
         	time_t t_folder = time(NULL);
         	struct tm *t = localtime(&t_folder);
@@ -114,10 +115,11 @@ int main(int argc, char **argv)
 			pid_t pid2 = fork();
 			int status2;
 			if(pid2 == 0) {
+				// 3A. membuat direktori file
                 		char *arg1[]={"mkdir",foldername,NULL};
 				execv("/bin/mkdir", arg1);
         		}
-        		else {
+        		else { // 3B. Mendownload 10 gambar
         			while((wait(&status2)) > 0);
 				for(int i=0; i<10; i++) {
 					pid_t pid3 = fork();
@@ -125,38 +127,40 @@ int main(int argc, char **argv)
 						time_t t_file = time(NULL);
 			                	struct tm *tp = localtime(&t_file);
 
-			                       char filename[100];
-	        		               strcpy(filename, foldername);
+			                        char filename[100];
+	        		                strcpy(filename, foldername);
 						strcat(filename,"/");
-
+						
 						char timefilename[100];
-	                	               strftime(timefilename, sizeof(timefilename)-1, "%Y-%m-%d_%H:%M:%S", tp);
+	                	             	strftime(timefilename, sizeof(timefilename)-1, "%Y-%m-%d_%H:%M:%S", tp);
 						strcat(filename, timefilename);
-
 
                 	                	char stime[10];
 	                        	        strftime(stime, sizeof(stime)-1, "%S", tp);
         	                        	int st = atoi(stime);
-                	                	st = (st%1000)+50;
+                	                	st = (st%1000)+50; // set size dan pixel
 
 	                                	sprintf(stime, "%d", st);
 
-	                                	char linkphoto[100];
-		                                strcpy(linkphoto,"https://picsum.photos/");
-        		                        strcat(linkphoto,stime);
+	                                	char link[100];
+		                                strcpy(link,"https://picsum.photos/");
+        		                        strcat(link,stime);
 
-						char *arg2[]={"wget","-O",filename,linkphoto,NULL};
+						char *arg2[]={"wget","-O",filename,link,NULL};
         	                		execv("/usr/bin/wget", arg2);
 					}
 					sleep(5);
 				}
-				pid_t pid4 = fork();
+				
+				//3C. Membuat file status.txt
 				char status[120];
 				sprintf(status,"%s/status.txt",foldername);
 				caesarcipher(pesan,5);
 				FILE *download = fopen(status,"w");
 				fprintf(download,"%s",pesan);
 				fclose(download);
+				//3C. Melakukan zip file
+				pid_t pid4 = fork();
 				int status4;
 				if(pid4 == 0) {
 					char zipname[120];
@@ -165,7 +169,8 @@ int main(int argc, char **argv)
 					char *arg3[]={"zip","-j","-r","-m",zipname,foldername,NULL};
 					execv("/usr/bin/zip",arg3);
 				}
-				else {
+				// Menghapus folder
+				else { 
 					while((wait(&status4)) > 0);
 					char *arg4[]={"rm","-d",foldername,NULL};
 					execv("/bin/rm",arg4);
