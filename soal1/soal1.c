@@ -184,49 +184,14 @@ int main() {
                          }
 
                     	if(child_id10==0){
-                        	char *argv[] = {
-								"find", 
-								"/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/FOTO", 
-								"-type",
-								"f",
-								"-exec",
-								"mv",
-								"{}",
-								"/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/Pyoto",
-								";", 
-								NULL};
-                        	execv("/usr/bin/find", argv);
+							
                     	}
                     	else{
                         	while((wait(&status10)) > 0);
-                        	char *argv[] = {
-								"find", 
-								"/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/FILM", 
-								"-type",
-								"f",
-								"-exec",
-								"mv",
-								"{}",
-								"/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/Fylm",
-								";", 
-								NULL};
-                        	execv("/usr/bin/find", argv);
                     	}
                 	}
                 	else{
                     	while((wait(&status9)) > 0);
-                    	char *argv[] = {
-							"find",
-							"/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/MUSIK",
-							"-type",
-							"f",
-							"-exec",
-							"mv",
-							"{}",
-							"//home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/Musyik",
-							";", 
-							NULL};
-                    	execv("/usr/bin/find", argv);
                 	}
             	}
         	}
