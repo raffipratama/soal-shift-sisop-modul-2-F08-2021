@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	FILE *killer = fopen(killername, "w");
 
 	if(strcmp(argv[1], "-z") == 0) {
-		fprintf(killer, "#!/bin/bash\nkillall -9 soal2\nrm %s", killername);
+		fprintf(killer, "#!/bin/bash\nkillall -9 soal3\nrm %s", killername);
 	}
 	else if(strcmp(argv[1], "-x") == 0) {
                 fprintf(killer, "#!/bin/bash\nkill %d\nrm %s", getpid(), killername);
