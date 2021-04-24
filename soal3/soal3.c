@@ -104,9 +104,9 @@ int main(int argc, char **argv)
 	while(1) {
 		char foldername[100] = "/home/akmal/Akmal/";
         	char strtime[100];
-        	time_t t_folder = time(NULL);
-        	struct tm *t = localtime(&t_folder);
-        	strftime(strtime, sizeof(foldername)-1, "%Y-%m-%d_%H:%M:%S", t);
+        	time_t t = time(NULL);
+        	struct tm *tm = localtime(&t);
+        	strftime(strtime, sizeof(foldername), "%Y-%m-%d_%H:%M:%S", tm);
         	strcat(foldername,strtime);
 
 		pid_t pid1 = fork();
@@ -124,29 +124,22 @@ int main(int argc, char **argv)
 				for(int i=0; i<10; i++) {
 					pid_t pid3 = fork();
 					if(pid3 == 0) {
-						time_t t_file = time(NULL);
-			                	struct tm *tp = localtime(&t_file);
+						time_t t = time(NULL);
+			                	struct tm *tp = localtime(&t);
 
 			                        char filename[100];
 	        		                strcpy(filename, foldername);
 						strcat(filename,"/");
 						
 						char timefilename[100];
-	                	             	strftime(timefilename, sizeof(timefilename)-1, "%Y-%m-%d_%H:%M:%S", tp);
+	                	             	strftime(timefilename, sizeof(timefilename), "%Y-%m-%d_%H:%M:%S", tp);
 						strcat(filename, timefilename);
 
-                	                	char stime[10];
-	                        	        strftime(stime, sizeof(stime)-1, "%S", tp);
-        	                        	int st = atoi(stime);
-                	                	st = (st%1000)+50; // set size dan pixel
-
-	                                	sprintf(stime, "%d", st);
-
 	                                	char link[100];
-		                                strcpy(link,"https://picsum.photos/");
-        		                        strcat(link,stime);
+		                                sprintf(link,"https://picsum.photos/%d",(((int)t) % 1000) + 50);
+        		          
 
-						char *arg2[]={"wget","-O",filename,link,NULL};
+						char *arg2[]={"wget","-qO",filename,link,NULL};
         	                		execv("/usr/bin/wget", arg2);
 					}
 					sleep(5);
@@ -177,6 +170,6 @@ int main(int argc, char **argv)
 				}
 			}
 		}
-                sleep(40);
+		sleep(40);
 	}
 }
