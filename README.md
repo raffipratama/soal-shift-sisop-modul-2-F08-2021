@@ -318,7 +318,7 @@ Lalu setelah serangkaian proses dijalankan hal yang terakhir dilakukan adalah me
 ## Penjelasan NO 3 
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program.
 
-**Daemon
+**Daemon**
 ````
 int main(int argc, char **argv){
 	pid_t pid, sid;        // Variabel untuk menyimpan PID
@@ -357,8 +357,8 @@ int main(int argc, char **argv){
 Penjelasan : 
 - Sebelum memulai, dibuat daemon terlebih dahulu untuk membuat parent id dan child id yang dibutuhkan untuk fork.
 
-### 3a
-**Soal : *** Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
+### 3A
+**Soal :** Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
 ````
 while(1) {
 		char foldername[100] = "/home/akmal/Akmal/";
@@ -389,7 +389,7 @@ Penjelasan :
 - Membuat directory menggunakan penamaan foldername yang berisi string tanggal `char *arg1[]={"mkdir",foldername,NULL};`dan melakukan execv untuk menjalankannya `execv("/bin/mkdir", arg1);`dan hanya membuat directory setiap 40 detik `sleep(40);`
 
 ### 3B
-**Soal :*** Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
+**Soal :** Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
 ````
 else { // 3B. Mendownload 10 gambar
         			while((wait(&status2)) > 0);
@@ -426,7 +426,7 @@ Penjelasan :
 - Karena ingin mendownload gambar setiap 5 detik `sleep(5);`
 
 ### 3C
-**Soal : *** Setelah direktori telah terisi dengan 10 gambar, program tersebut akan membuat sebuah file “status.txt”, dimana didalamnya berisi pesan “Download Success” yang terenkripsi dengan teknik Caesar Cipher dan dengan shift 5. Caesar Cipher adalah Teknik enkripsi sederhana yang dimana dapat melakukan enkripsi string sesuai dengan shift/key yang kita tentukan. Misal huruf “A” akan dienkripsi dengan shift 4 maka akan menjadi “E”. Karena Ranora orangnya perfeksionis dan rapi, dia ingin setelah file tersebut dibuat, direktori akan di zip dan direktori akan didelete, sehingga menyisakan hanya file zip saja.
+**Soal :** Setelah direktori telah terisi dengan 10 gambar, program tersebut akan membuat sebuah file “status.txt”, dimana didalamnya berisi pesan “Download Success” yang terenkripsi dengan teknik Caesar Cipher dan dengan shift 5. Caesar Cipher adalah Teknik enkripsi sederhana yang dimana dapat melakukan enkripsi string sesuai dengan shift/key yang kita tentukan. Misal huruf “A” akan dienkripsi dengan shift 4 maka akan menjadi “E”. Karena Ranora orangnya perfeksionis dan rapi, dia ingin setelah file tersebut dibuat, direktori akan di zip dan direktori akan didelete, sehingga menyisakan hanya file zip saja.
 
 Fungsi Caesar Cipher 
 ````
@@ -497,7 +497,7 @@ Penjelasan :
 - Apabila wait status > 0 maka akan menghapus directory yang sebelumnya dibuat `char *arg4[]={"rm","-d",foldername,NULL};` dan menjalankannya `execv("/bin/rm",arg4);`
 
 ### 3D
-**Soal : *** Untuk mempermudah pengendalian program, pembimbing magang Ranora ingin program tersebut akan men-generate sebuah program “Killer” yang executable, dimana program tersebut akan menterminasi semua proses program yang sedang berjalan dan akan menghapus dirinya sendiri setelah program dijalankan. Karena Ranora menyukai sesuatu hal yang baru, maka Ranora memiliki ide untuk program “Killer” yang dibuat nantinya harus merupakan program bash.
+**Soal :** Untuk mempermudah pengendalian program, pembimbing magang Ranora ingin program tersebut akan men-generate sebuah program “Killer” yang executable, dimana program tersebut akan menterminasi semua proses program yang sedang berjalan dan akan menghapus dirinya sendiri setelah program dijalankan. Karena Ranora menyukai sesuatu hal yang baru, maka Ranora memiliki ide untuk program “Killer” yang dibuat nantinya harus merupakan program bash.
 
 ````
 	char killername[100];
@@ -523,3 +523,38 @@ Penjelasan :
 	fclose(killer);
 ````
 Penjelasan : 
+- Membuat file killer.sh `strcpy(killername, "/home/akmal/Akmal/killer.sh");`
+- Melakukan ceck argumen yang dimasukkan `if(strcmp(argv[1], "-z") == 0` atau `else if(strcmp(argv[1], "-x") == 0` jika tidak sama maka akan exit failure
+- kemudian membuat fork dan membuat file killer.sh bisa dijalankan dalam bash `char *arg[]={"chmod","x",killername,NULL};` dan menjalankan program bash tersebut `execv("/bin/chmod", arg);`
+
+### 3E
+**Soal : ** Pembimbing magang Ranora juga ingin nantinya program utama yang dibuat Ranora dapat dijalankan di dalam dua mode. Untuk mengaktifkan mode pertama, program harus dijalankan dsdengan argumen -z, dan Ketika dijalankan dalam mode pertama, program utama akan langsung menghentikan semua operasinya Ketika program Killer dijalankan. Sedangkan untuk mengaktifkan mode kedua, program harus dijalankan dengan argumen -x, dan Ketika dijalankan dalam mode kedua, program utama akan berhenti namun membiarkan proses di setiap direktori yang masih berjalan hingga selesai (Direktori yang sudah dibuat akan mendownload gambar sampai selesai dan membuat file txt, lalu zip dan delete direktori).
+````
+if(argc != 2 || (argv[1][1] != 'z' && argv[1][1] != 'x')) {
+        printf("Mode hanya ada -z atau -x\n");
+        exit(0);
+        }
+````
+Penjelasan :
+- Jika input yang diberikan bukan z atau x maka program tidak berjalan
+
+Program killer -z
+````
+if(strcmp(argv[1], "-z") == 0) {
+		fprintf(killer, "#!/bin/bash\nkillall -9 soal3\nrm %s", killername);
+	}
+````
+Program killer -x 
+````
+else if(strcmp(argv[1], "-x") == 0) {
+                fprintf(killer, "#!/bin/bash\nkill %d\nrm %s", getpid(), killername);
+        }
+````
+Penjelasan : 
+- Apabila program z dijalankan akan diprint dalam killer.sh `fprintf(killer, "#!/bin/bash\nkillall -9 soal3\nrm %s", killername);`
+- Apabila program x dijalankan akan diprint dalam killer.sh `fprintf(killer, "#!/bin/bash\nkill %d\nrm %s", getpid(), killername);`
+
+Kendala :
+- Kesulitan ketika menemukan kesalahan kesalahan ketika program mendownload, akan tetapi hasil download ternyata tidak keluar
+- Kesulitan ketika menemukan kesalahan directory tidak membuat directory setiap 40 detik
+- Kesulitan ketika program killer dijalankan, namun killer masih belum berjalan
