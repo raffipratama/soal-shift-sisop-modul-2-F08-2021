@@ -41,9 +41,10 @@ char caesarcipher(char* msg, int shift)
 
 int main(int argc, char **argv) 
 {
-	if (argc != 2) {
-	exit(EXIT_FAILURE);
-  	}
+	if(argc != 2 || (argv[1][1] != 'z' && argv[1][1] != 'x')) {
+        printf("Mode hanya ada -z atau -x\n");
+        exit(0);
+        }
 
 	pid_t pid, sid;        // Variabel untuk menyimpan PID
 
