@@ -109,7 +109,7 @@ Keterangan :
 Kendala :
 - mencari argumen/ command pada perintah eksekusi yang pas untuk hasil yang diinginkan
 - terdapat kendala error saat melakukan perintah wget(donwload file) dimana request mendapat status forbidden 403 sehingga donwload file gagal. Terjadinya kendala donwload secara tidak menentu.
- https://user-images.githubusercontent.com/65032157/115995021-bb27ea00-a603-11eb-876b-a66905d868e3.jpeg
+![WhatsApp Image 2021-04-24 at 18 43 08](https://user-images.githubusercontent.com/65032157/115995021-bb27ea00-a603-11eb-876b-a66905d868e3.jpeg)
  
  
 ## Penjelasan NO 2 
