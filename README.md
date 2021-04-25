@@ -12,8 +12,8 @@ Nur Moh. Ihsanuddien | 05111940000142
 folder-foldernya adalah Musyik untuk mp3, Fylm untuk mp4, dan Pyoto untuk jpg
 
 ```
-char *argv[] = {"mkdir", "-p", "Musyik","Fylm","Pyoto" ,NULL};
-execv("/usr/bin/mkdir", argv);}
+char *argv1[] = {"mkdir", "-p", "Musyik","Fylm","Pyoto" ,NULL};
+execv("/usr/bin/mkdir", argv1);}
 ```
 Keterangan : 
 - Pada proses child paling awal dilakukan dengan menggunakan execv untuk mengeksekusi sesuai dengan didalam argv yaitu membuat folder Fylm,Pyoto, dan Musyik
@@ -24,48 +24,94 @@ dibawah juga :).
 
 ```
 #Foto
-	char *argv[] = {"wget","-q","--no-check-certificate","https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download","-O","Foto_for_Stevany.zip", NULL};
-  execv("/usr/bin/wget",argv);
+char *argv2[] = {"wget","-q","--no-check-certificate","https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download","-O","Foto_for_Stevany.zip", NULL};
+execv("/usr/bin/wget",argv2);
 ```
 
 ```
 #Film
-char *argv[] = {"wget","-q","--no-check-certificate","https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download","-O","Film_for_Stevany.zip", NULL};
-execv("/usr/bin/wget", argv);
+char *argv6[] = {"wget","-q","--no-check-certificate","https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download","-O","Film_for_Stevany.zip", NULL};
+execv("/usr/bin/wget", argv6);
 ```
 
 ```
 #Musik
-char *argv[] = {"wget","-q","--no-check-certificate","https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download","-O","Musik_for_Stevany.zip", NULL};
-execv("/usr/bin/wget", argv);
+char *argv4[] = {"wget","-q","--no-check-certificate","https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download","-O","Musik_for_Stevany.zip", NULL};
+execv("/usr/bin/wget", argv4);
 ```
 
 Keterangan : 
 -Pada tiap-tiap perintah menggunakan execv untuk mengeksekusi dengan isi dalam char * argv sesuai yang telah diberikan di soal untuk mendonwload konten berformat zip
 
-**c**Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu
-meng-extract-nya setelah didownload serta
+**c** Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu
+meng-extract-nya setelah didownload serta 
+**d** memindahkannya ke dalam folder yang telah
+dibuat (hanya file yang dimasukkan).
 
 ```
 #Foto
-char *argv[] = {"unzip","Foto_for_Stevany.zip","-d","/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1", NULL};
-execv("/usr/bin/unzip", argv);
+char *argv3[] = {"unzip","-j","Foto_for_Stevany.zip","-d","/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/Pyoto", NULL};
+execv("/usr/bin/unzip", argv3);;
 ```
 
 ```
 #Film
-char *argv[] = {"unzip","Film_for_Stevany.zip","-d","/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1", NULL};
-execv("/usr/bin/unzip", argv);
+char *argv7[] = {"unzip","-j","Film_for_Stevany.zip","-d","/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/Fylm", NULL};
+execv("/usr/bin/unzip", argv7);
 ```
 
 ```
 #Musik
-char *argv[] = {"unzip","Musik_for_Stevany.zip","-d","/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1", NULL};
-execv("/usr/bin/unzip", argv);
+char *argv5[] = {"unzip","-j","Musik_for_Stevany.zip","-d","/home/ihsannm/soal-shift-sisop-modul-2-F08-2021/soal1/Musyik", NULL};
+execv("/usr/bin/unzip", argv5);
 ```
 Keterangan :
-- Unzip dilakukan dengan menggunakan execv untuk mengeksekusi perintah dalam argv dimana unzip file (namafile).zip dan dilakukan di direktori yang dimasukkan 
+- Pada 1c dan 1d dilakukan secara  bersamaan 
+- untuk 1c meng-extract file.zip dilakukan dengan perintah unzip dimana menggunakan perintah execv pada /usr/bin/unzip
+- untuk 1d file dalam zip ketika di-extract dapat langsung dipindahkan ke file diinginkan dengan menggunakan argumen "-j" setelah command unzip
+- argumen "-d" digunakan untuk menaruh file ke direktori yang diinginkan untuk menaruh hasil extract
 
+**e** Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum
+waktu ulang tahun Stevany.
+
+```
+time_t currTm;
+currTm = time(NULL);
+struct tm currTime = *localtime(&currTm);
+
+if( currTime.tm_sec==00 && currTime.tm_min==22 && currTime.tm_hour==16 && currTime.tm_mday==9 && currTime.tm_mon == 3){
+}
+
+```
+Keterangan :
+- Dengan menggunakan bantuan dari header time.h mengatur agar terdapat variabel yang berisikan informasi waktu di sistem
+- Setelah itu untuk mengatur agar berjalan 6 jam sebelum Ulang Tahun stevany diatur dengan menggunakan percabangan dimana ketika info waktu yang ada di struct currTime sesuai yang diinginkan maka program akan dilaksanakan
+
+**f** Setelah itu pada waktu ulang tahunnya Stevany, semua folder
+akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya
+menyisakan .zip)
+
+```
+#Dengan menggunakan perlanjutan dari percabangan sesuai pada 1e 
+
+else if( currTime.tm_sec==00 && currTime.tm_min==22 && currTime.tm_hour==22 && currTime.tm_mday==9 && currTime.tm_mon == 3){
+ ....
+ char *argv8[]={"zip","-rm","Lopyu_Stevany.zip","Fylm","Musyik","Pyoto", NULL};
+ execv("/usr/bin/zip",argv8);
+ ....
+}
+```
+Keterangan :
+- Code akan berjalan ketika kondisi waktu sesuai dengan syarat percabangan yaitu pada 9 april pukul 22:22:00
+- Zip file dilakukan dengan perintah zip pada execv dan menggunakan argumen "-r" akan dilakukan zip semua folder yang diinginkan beserta file isi didalamnya
+- Argumen "-m" pada zip akan membuat folder dan file yang telah di zip akan dihapus oleh sistem setelah selesai menjadikannya dalam 1 file zip Lopyu_Stevany.zip
+
+Kendala :
+- mencari argumen/ command pada perintah eksekusi yang pas untuk hasil yang diinginkan
+- terdapat kendala error saat melakukan perintah wget(donwload file) dimana request mendapat status forbidden 403 sehingga donwload file gagal. Terjadinya kendala donwload secara tidak menentu.
+ https://user-images.githubusercontent.com/65032157/115995021-bb27ea00-a603-11eb-876b-a66905d868e3.jpeg
+ 
+ 
 ## Penjelasan NO 2 
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
 
