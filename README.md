@@ -316,4 +316,210 @@ Lalu setelah serangkaian proses dijalankan hal yang terakhir dilakukan adalah me
                 }
 ```
 ## Penjelasan NO 3 
+Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program.
 
+**Daemon
+````
+int main(int argc, char **argv){
+	pid_t pid, sid;        // Variabel untuk menyimpan PID
+
+	pid = fork();     // Menyimpan PID dari Child Process
+
+	/* Keluar saat fork gagal
+	* (nilai variabel pid < 0) */
+	if (pid < 0) 
+	{
+  		exit(EXIT_FAILURE);
+  	}
+
+	/* Keluar saat fork berhasil
+	* (nilai variabel pid adalah PID dari child process) */
+	if (pid > 0) {
+	exit(EXIT_SUCCESS);
+	}
+
+	umask(0);
+
+	sid = setsid();
+	if (sid < 0) {
+		exit(EXIT_FAILURE);
+	}
+
+	if ((chdir("/")) < 0) {
+		exit(EXIT_FAILURE);
+	}
+
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+}
+````
+Penjelasan : 
+- Sebelum memulai, dibuat daemon terlebih dahulu untuk membuat parent id dan child id yang dibutuhkan untuk fork.
+
+### 3a
+**Soal : *** Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
+````
+while(1) {
+		char foldername[100] = "/home/akmal/Akmal/";
+        	char strtime[100];
+        	time_t t = time(NULL);
+        	struct tm *tm = localtime(&t);
+        	strftime(strtime, sizeof(foldername), "%Y-%m-%d_%H:%M:%S", tm);
+        	strcat(foldername,strtime);
+
+		pid_t pid1 = fork();
+        	int status1;
+        	if(pid1 == 0) {
+			pid_t pid2 = fork();
+			int status2;
+			if(pid2 == 0) {
+				// 3A. membuat direktori file
+                		char *arg1[]={"mkdir",foldername,NULL};
+				execv("/bin/mkdir", arg1);
+        		}
+		sleep(40);
+}
+````
+Penjelasan : 
+- Membuat folder path yang akan dituju `char foldername[100] = "/home/akmal/Akmal/";`
+- Membuat penamaan file menggunakan local time `struct tm *tm = localtime(&t);` dan mereturn string berbentuk tanggal `strftime(strtime, sizeof(foldername), "%Y-%m-%d_%H:%M:%S", tm);`
+- Menyimpan string tanggal tersebut ke dalam foldername `strcat(foldername,strtime);`
+- Melakukan fork untuk pid1 `pid_t pid1 = fork();` dan ketika pid1 == 0 melakukan fork untuk pid2 `pid_t pid2 = fork();`
+- Membuat directory menggunakan penamaan foldername yang berisi string tanggal `char *arg1[]={"mkdir",foldername,NULL};`dan melakukan execv untuk menjalankannya `execv("/bin/mkdir", arg1);`dan hanya membuat directory setiap 40 detik `sleep(40);`
+
+### 3B
+**Soal :*** Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
+````
+else { // 3B. Mendownload 10 gambar
+        			while((wait(&status2)) > 0);
+				for(int i=0; i<10; i++) {
+					pid_t pid3 = fork();
+					if(pid3 == 0) {
+						time_t t = time(NULL);
+			                	struct tm *tp = localtime(&t);
+
+			                        char filename[100];
+	        		                strcpy(filename, foldername);
+						strcat(filename,"/");
+						
+						char timefilename[100];
+	                	             	strftime(timefilename, sizeof(timefilename), "%Y-%m-%d_%H:%M:%S", tp);
+						strcat(filename, timefilename);
+
+	                                	char link[100];
+		                                sprintf(link,"https://picsum.photos/%d",(((int)t) % 1000) + 50);
+        		          
+
+						char *arg2[]={"wget","-qO",filename,link,NULL};
+        	                		execv("/usr/bin/wget", arg2);
+					}
+					sleep(5);
+				}
+````
+Penjelasan :
+- ketika wait status > 0 maka akan melakukan perulangan dan melakukan fork untuk pid baru
+- Membuat penamaan file menggunakan local time `struct tm *tp = localtime(&t);` dan mereturn string berbentuk tanggal `strftime(timefilename, sizeof(timefilename), "%Y-%m-%d_%H:%M:%S", tp);`
+- Menyimpan string tanggal ke dalam filename `strcat(filename, timefilename);`
+- Mengeprint gambar dari berupa link yang tersedia dan mengatur formatnya `sprintf(link,"https://picsum.photos/%d",(((int)t) % 1000) + 50);`
+- Mendownload gambar yang ada menggunakan `char *arg2[]={"wget","-qO",filename,link,NULL};`dan menjalankannya `execv("/usr/bin/wget", arg2);`
+- Karena ingin mendownload gambar setiap 5 detik `sleep(5);`
+
+### 3C
+**Soal : *** Setelah direktori telah terisi dengan 10 gambar, program tersebut akan membuat sebuah file “status.txt”, dimana didalamnya berisi pesan “Download Success” yang terenkripsi dengan teknik Caesar Cipher dan dengan shift 5. Caesar Cipher adalah Teknik enkripsi sederhana yang dimana dapat melakukan enkripsi string sesuai dengan shift/key yang kita tentukan. Misal huruf “A” akan dienkripsi dengan shift 4 maka akan menjadi “E”. Karena Ranora orangnya perfeksionis dan rapi, dia ingin setelah file tersebut dibuat, direktori akan di zip dan direktori akan didelete, sehingga menyisakan hanya file zip saja.
+
+Fungsi Caesar Cipher 
+````
+char caesarcipher(char* msg, int shift)
+{	
+	int i;
+	char word;
+	for(int i = 0; msg [i] != '\0'; ++i)
+	{
+		word=msg[i];
+		if (word >= 'A' && word <= 'Z') // untuk huruf Uppercase
+		{
+			word = word + shift;
+			if (word > 'Z')
+				{	
+					word = word - 'Z' + 'A' - 1;
+				}
+			msg[i] = word;
+		}
+		else if (word >= 'a' && word <= 'z') // untuk huruf lowercase
+		{
+			word = word + shift;
+			if (word > 'z')
+				{	
+					word = word - 'z' + 'a' - 1;
+				}
+			msg[i] = word;
+		}
+	}	
+}
+````
+Penjelasan :
+- Untuk setiap huruf yang akan diinputkan akan dilakukan penjumlahan sesuai nilainya dan dijumlahkan dengan nilai shiftnya `word = word + shift;`
+- Apabila nilai huruf melebihi nilai z maka akan direturn `word = word - 'Z' + 'A' - 1;` 
+- Apabila telah selesai dienkripsi maka akan direturn hasil enkripsinya
+
+````
+//3C. Membuat file status.txt
+				char status[120];
+				sprintf(status,"%s/status.txt",foldername);
+				caesarcipher(pesan,5);
+				FILE *download = fopen(status,"w");
+				fprintf(download,"%s",pesan);
+				fclose(download);
+				//3C. Melakukan zip file
+				pid_t pid4 = fork();
+				int status4;
+				if(pid4 == 0) {
+					char zipname[120];
+					strcpy(zipname, foldername);
+					strcat(zipname,".zip");
+					char *arg3[]={"zip","-j","-r","-m",zipname,foldername,NULL};
+					execv("/usr/bin/zip",arg3);
+				}
+				// Menghapus folder
+				else { 
+					while((wait(&status4)) > 0);
+					char *arg4[]={"rm","-d",foldername,NULL};
+					execv("/bin/rm",arg4);
+				}
+````
+Penjelasan : 
+- Membuat status.txt `sprintf(status,"%s/status.txt",foldername);` 
+- Melakukan hasil enkripsi pesan `caesarcipher(pesan,5);`
+- Melakukan penulisan isi status.txt `fprintf(download,"%s",pesan);`
+- Membuat pid4 dan dilakukan fork, kemudian membuat file zipname dengan menggunakan penamaan foldername `strcpy(zipname, foldername);`
+- Melakukan proses zip `char *arg3[]={"zip","-j","-r","-m",zipname,foldername,NULL};` dan menjalankan prosesnya `execv("/usr/bin/zip",arg3);`
+- Apabila wait status > 0 maka akan menghapus directory yang sebelumnya dibuat `char *arg4[]={"rm","-d",foldername,NULL};` dan menjalankannya `execv("/bin/rm",arg4);`
+
+### 3D
+**Soal : *** Untuk mempermudah pengendalian program, pembimbing magang Ranora ingin program tersebut akan men-generate sebuah program “Killer” yang executable, dimana program tersebut akan menterminasi semua proses program yang sedang berjalan dan akan menghapus dirinya sendiri setelah program dijalankan. Karena Ranora menyukai sesuatu hal yang baru, maka Ranora memiliki ide untuk program “Killer” yang dibuat nantinya harus merupakan program bash.
+
+````
+	char killername[100];
+	strcpy(killername, "/home/akmal/Akmal/killer.sh");
+	FILE *killer = fopen(killername, "w");
+
+	if(strcmp(argv[1], "-z") == 0) {
+		fprintf(killer, "#!/bin/bash\nkillall -9 soal3\nrm %s", killername);
+	}
+	else if(strcmp(argv[1], "-x") == 0) {
+                fprintf(killer, "#!/bin/bash\nkill %d\nrm %s", getpid(), killername);
+        }
+	else {
+		fclose(killer);
+		exit(EXIT_FAILURE);
+	}
+
+	pid_t pidk = fork();
+	if(pidk == 0) {
+		char *arg[]={"chmod","x",killername,NULL};
+		execv("/bin/chmod", arg);
+	}
+	fclose(killer);
+````
+Penjelasan : 
